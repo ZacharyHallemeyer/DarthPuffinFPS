@@ -50,7 +50,8 @@ public class ClientSend : MonoBehaviour
             }
             //_packet.Write(GameManager.players[Client.instance.myId].transform.rotation);
             // Orientation needs to be the first child of player
-            _packet.Write(GameManager.players[Client.instance.myId].transform.GetChild(0).transform.rotation);
+            _packet.Write(GameManager.players[Client.instance.myId].transform.GetChild(0).transform.localRotation);
+            Quaternion testing = GameManager.players[Client.instance.myId].transform.GetChild(0).transform.localRotation;
 
             SendUDPData(_packet);
         }

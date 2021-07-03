@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 81f714daf7144784b8a2f42f1cd30927, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -261,6 +261,8 @@ MonoBehaviour:
   playerPrefab: {fileID: 3779463834754585843, guid: 87dedc88d8cae464b886dca4c994d694,
     type: 3}
   planetPrefab: {fileID: 439844200034824759, guid: 09189e204b0f88444b39ef3d7b9854a9,
+    type: 3}
+  gravityParticleFieldPrefab: {fileID: 7262253648658839211, guid: 19bd22fb6cfa04841951250d9ffcaba0,
     type: 3}
 --- !u!1 &2092470317
 GameObject:
