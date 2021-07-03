@@ -57,6 +57,25 @@ public class ClientSend : MonoBehaviour
         }
     }
 
+    public static void PlayerStartGrapple(Vector3 _direction)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.playerStartGrapple))
+        {
+            _packet.Write(_direction);
+
+            SendTCPData(_packet);
+        }
+    }
+
+    public static void PlayerStopGrapple()
+    {
+        Debug.Log("Player stop grapple static method is called");
+        using (Packet _packet = new Packet((int)ClientPackets.playerStopGrapple))
+        {
+            SendTCPData(_packet);
+        }
+    }
+
     public static void PlayerShoot(Vector3 _facing)
     {
         using (Packet _packet = new Packet((int)ClientPackets.playerShoot))

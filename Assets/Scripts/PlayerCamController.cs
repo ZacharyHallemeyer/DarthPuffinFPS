@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class PlayerCamController : MonoBehaviour
 {
+    public Transform playerRotation;
     public Transform orientation;
+    public Rigidbody rb;
     //public float sensitivity = 100f;
     public float clampAngle = 85f;
 
@@ -47,26 +49,6 @@ public class PlayerCamController : MonoBehaviour
 
     private void Look()
     {
-        /*
-        float _mouseVertical = -Input.GetAxis("Mouse Y");
-        float _mouseHorizontal = Input.GetAxis("Mouse X");
-
-        verticleRotation += _mouseVertical * sensitivity * Time.deltaTime;
-        horizontalRotation += _mouseHorizontal * sensitivity * Time.deltaTime;
-
-        verticleRotation = Mathf.Clamp(verticleRotation, -clampAngle, clampAngle);
-
-        transform.localRotation = Quaternion.Euler(verticleRotation, horizontalRotation, 0);
-        orientation.localRotation = Quaternion.Euler(orientation.localRotation.eulerAngles.x, 
-                                                     horizontalRotation,
-                                                     orientation.localRotation.eulerAngles.z);
-        */
-        /*
-        mouseX = Camera.main.ScreenToViewportPoint(inputMaster.Player.MouseLook.ReadValue<Vector2>()).x
-               * sensitivity * Time.fixedDeltaTime * sensMultiplier;
-        mouseY = Camera.main.ScreenToViewportPoint(inputMaster.Player.MouseLook.ReadValue<Vector2>()).y
-                       * sensitivity * Time.fixedDeltaTime * sensMultiplier;
-        */
         mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime * sensMultiplier;
         mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime * sensMultiplier;
 
@@ -80,6 +62,7 @@ public class PlayerCamController : MonoBehaviour
 
         // Perform the rotations
         transform.localRotation = Quaternion.Euler(xRotation, desiredX, 0);
+        //rb.MoveRotation(Quaternion.Euler(xRotation, desiredX, 0));
         orientation.localRotation = Quaternion.Euler(0, desiredX, 0);
         // Make the server handle camera rotation (empty game object on server side) so that player can shoot from cam forward on server
     }

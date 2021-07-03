@@ -72,11 +72,32 @@ public class ClientHandle : MonoBehaviour
         GameManager.players[_id].Respawn();
     }
 
-    public static void CreateEnvironment(Packet _packet)
+    public static void CreateNewPlanet(Packet _packet)
     {
         Vector3 _position = _packet.ReadVector3();
         Vector3 _localScale = _packet.ReadVector3();
 
-        GameManager.instance.CreateEnvironment(_position, _localScale);
+        GameManager.instance.CreatePlanet(_position, _localScale);
+    }
+
+    public static void CreateBoundary(Packet _packet)
+    {
+        Vector3 _position = _packet.ReadVector3();
+        float _radius = _packet.ReadFloat();
+
+        GameManager.instance.CreateBoundaryVisual(_position, _radius);
+    }
+    public static void PlayerStartGrapple(Packet _packet)
+    {
+        int _id = _packet.ReadInt();
+
+        GameManager.players[_id].StartGrapple();
+    }
+
+    public static void PlayerStopGrapple(Packet _packet)
+    {
+        int _id = _packet.ReadInt();
+
+        GameManager.players[_id].StopGrapple();
     }
 }

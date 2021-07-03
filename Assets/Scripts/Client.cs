@@ -280,7 +280,10 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.playerDisconnected, ClientHandle.PlayerDisconnected },
             { (int)ServerPackets.playerHealth, ClientHandle.PlayerHealth },
             { (int)ServerPackets.playerRespawned, ClientHandle.PlayerRespawned },
-            { (int)ServerPackets.createEnvironment, ClientHandle.CreateEnvironment },
+            { (int)ServerPackets.createNewPlanet, ClientHandle.CreateNewPlanet },
+            { (int)ServerPackets.createBoundary, ClientHandle.CreateBoundary },
+            { (int)ServerPackets.playerStartGrapple, ClientHandle.PlayerStartGrapple },
+            { (int)ServerPackets.playerStopGrapple, ClientHandle.PlayerStopGrapple },
         };
         Debug.Log("Initialized packets.");
     }
