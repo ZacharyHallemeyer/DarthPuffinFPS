@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -11,11 +12,14 @@ public class PlayerManager : MonoBehaviour
     public int itemCount = 0;
     public MeshRenderer model;
     public Camera playerCam;
+    public InputMaster inputMaster;
+    public PlayerUI playerUI;
 
     // Grapple
     public LineRenderer lineRenderer;
     private Vector3 grapplePoint;
     public bool isGrappling = false;
+    public bool releasedGrappleControlSinceLastGrapple = true;
 
     // Testing
     public Transform orientation;
@@ -55,6 +59,9 @@ public class PlayerManager : MonoBehaviour
     private ParticleSystem.ShapeModule shapeModule;
     public GameObject[] gunObjects;
     public bool isAnimInProgress;
+    public bool isShooting;
+    public int animationCounter = 0;
+    public float timeSinceLastShoot = 0;
 
     // Testing
     //public string currentGunString;
@@ -71,6 +78,21 @@ public class PlayerManager : MonoBehaviour
         PlayerInitGun(_gunName);
         if (gameObject.name != "LocalPlayer(Clone)")
             enabled = false;
+    }
+
+    private void Awake()
+    {
+        inputMaster = new InputMaster();
+    }
+
+    public void OnEnable()
+    {
+        inputMaster.Enable();
+    }
+
+    public void OnDisable()
+    {
+        inputMaster.Disable();
     }
 
     public void SetGunInformation()
@@ -124,22 +146,18 @@ public class PlayerManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-            ClientSend.PlayerStartShoot(playerCam.transform.position, playerCam.transform.forward);
-        if (Input.GetKeyUp(KeyCode.Mouse0))
-        {
-            ClientSend.PlayerStopShoot();
-        }
-
+        timeSinceLastShoot += Time.deltaTime;
         if (!isGrappling)
         {
-            if (Input.GetKeyDown(KeyCode.Mouse2))
+            if (inputMaster.Player.Grapple.ReadValue<float>() != 0 && releasedGrappleControlSinceLastGrapple)
                 ClientSend.PlayerStartGrapple(playerCam.transform.forward);
         }
-        if (isGrappling)
+        if (!releasedGrappleControlSinceLastGrapple)
         {
-            if (Input.GetKeyUp(KeyCode.Mouse2))
+            if (inputMaster.Player.Grapple.ReadValue<float>() == 0
+                || Mathf.Abs((transform.position - grapplePoint).magnitude) < 5f)
             {
+                releasedGrappleControlSinceLastGrapple = true;
                 ClientSend.PlayerStopGrapple();
                 StopGrapple();
             }
@@ -150,6 +168,28 @@ public class PlayerManager : MonoBehaviour
         //TODO: ADD LAYER MASK
         if (Physics.OverlapSphere(transform.position, 10, LayerMask.GetMask("GravityObject")).Length != 0)
             RotatePlayerAccordingToGravity(Physics.OverlapSphere(transform.position, 10, LayerMask.GetMask("GravityObject"))[0]);
+
+        // Handle Guns
+        if (isAnimInProgress) return;
+
+        if(!isShooting)
+        {
+            if (inputMaster.Player.Shoot.ReadValue<float>() != 0 && timeSinceLastShoot > currentGun.fireRate)
+            {
+                timeSinceLastShoot = 0;
+                ClientSend.PlayerStartShoot(playerCam.transform.position, playerCam.transform.forward);
+            }
+        }
+        if(isShooting && !isAnimInProgress)
+        {
+            if (inputMaster.Player.Shoot.ReadValue<float>() == 0)
+                ClientSend.PlayerStopShoot();
+        }
+        if (inputMaster.Player.Reload.triggered)
+            ClientSend.PlayerReload();
+        if (inputMaster.Player.SwitchWeaponMouseWheel.ReadValue<Vector2>().y != 0
+            || inputMaster.Player.SwitchWeaponButton.triggered)
+            ClientSend.PlayerSwitchWeapon();
     }
 
     private void FixedUpdate()
@@ -180,6 +220,9 @@ public class PlayerManager : MonoBehaviour
 
     private void SendInputToServer()
     {
+        Vector2 _moveDirection = inputMaster.Player.Movement.ReadValue<Vector2>();
+
+        /*
         bool[] _inputsBools = new bool[]
         {
             Input.GetKey(KeyCode.W),
@@ -190,14 +233,16 @@ public class PlayerManager : MonoBehaviour
             Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.Mouse4),
             Input.GetKey(KeyCode.Alpha1),
         };
+        */
 
-        ClientSend.PlayerMovement(_inputsBools, isAnimInProgress);
+        ClientSend.PlayerMovement(_moveDirection, isAnimInProgress);
     }
 
     #region Grapple
 
     public void StartGrapple()
     {
+        releasedGrappleControlSinceLastGrapple = false;
         isGrappling = true;
         if (Physics.Raycast(transform.position, playerCam.transform.forward, out RaycastHit _hit))
             grapplePoint = _hit.point;
@@ -228,37 +273,52 @@ public class PlayerManager : MonoBehaviour
 
     #region Guns
 
-    public void PlayerStartSingleFireAnim()
+    public void PlayerStartSingleFireAnim(int _currentAmmo, int _reserveAmmo)
     {
         isAnimInProgress = true;
+        isShooting = true;
         currentGun.gun.Stop();
         currentGun.bullet.Play();
+        playerUI.ChangeGunUIText(_currentAmmo, _reserveAmmo);
         InvokeRepeating("PlayerSingleFireAnim", currentGun.fireRate, 0f);
     }
 
     public void PlayerSingleFireAnim()
     {
-        Debug.Log("Player single fire is called");
         isAnimInProgress = false;
+        isShooting = false;
         currentGun.gun.Play();
+        CancelInvoke("PlayerSingleFireAnim");
+        // TODO
+            // Spawn Bullet and update ammo UI
     }
 
-    public void PlayerStartAutomaticFireAnim()
+    public void PlayerStartAutomaticFireAnim(int _currentAmmo, int _reserveAmmo)
     {
+        playerUI.ChangeGunUIText(_currentAmmo, _reserveAmmo);
+        isShooting = true;
         ParticleSystem.RotationOverLifetimeModule rot = currentGun.gun.rotationOverLifetime;
         rot.enabled = true;
     }
 
-    public void PlayerStopAutomaticFireAnim()
+    public void PlayerContinueAutomaticFireAnim(int _currentAmmo, int _reserveAmmo)
     {
-        ParticleSystem.RotationOverLifetimeModule rot = currentGun.gun.rotationOverLifetime;
-        rot.enabled = false;
+        playerUI.ChangeGunUIText(_currentAmmo, _reserveAmmo);
+        currentGun.gun.Play();
     }
 
-    public void PlayerStartReloadAnim()
+    public void PlayerStartReloadAnim(int _currentAmmo, int _reserveAmmo)
     {
         isAnimInProgress = true;
+        playerUI.ChangeGunUIText(_currentAmmo, _reserveAmmo);
         InvokeRepeating("ReloadAnimCompress", 0f, currentGun.reloadTime / 6f);
+    }
+
+    public void PlayerStopAutomaticFireAnim()
+    {
+        isShooting = false;
+        ParticleSystem.RotationOverLifetimeModule rot = currentGun.gun.rotationOverLifetime;
+        rot.enabled = false;
     }
 
     public void ReloadAnimCompress()
@@ -291,9 +351,74 @@ public class PlayerManager : MonoBehaviour
         currentGun.gun.Play();
     }
 
-    public void PlayerStartSwitchWeaponAnim()
+    public void PlayerStartSwitchWeaponAnim(string _newGunName, int _currentAmmo, int _reserveAmmo)
     {
+        isAnimInProgress = true;
 
+        foreach(GunInformation _gun in allGunInformation.Values)
+        {
+            if (_gun.name == _newGunName)
+                secondaryGun = _gun;
+        }
+
+        GunInformation temp = currentGun;
+        currentGun = secondaryGun;
+        secondaryGun = temp;
+
+        playerUI.ChangeGunUIText(_currentAmmo, _reserveAmmo);
+        InvokeRepeating("ChangeCurrentGunAnimationExapnd", 0, 1f / 10f);
+    }
+
+    /// <summary>
+    /// Expands current gun by increasing particle system radius
+    /// Has be called with invoke repeating and takes 10 iterations to finished. Divide total time by 10 for time repeat 
+    /// Dependencies: ChangeCurrentGunAnimationCompress
+    /// </summary>
+    private void ChangeCurrentGunAnimationExapnd()
+    {
+        if (animationCounter >= 10)
+        {
+            animationCounter = 0;
+            CancelInvoke("ChangeCurrentGunAnimationExapnd");
+            shapeModule.radius = currentGun.originalGunRadius;
+
+            secondaryGun.gunContainer.SetActive(false);
+            currentGun.gunContainer.SetActive(true);
+            shapeModule = currentGun.gun.shape;
+            shapeModule.radius *= 20;
+
+            InvokeRepeating("ChangeCurrentGunAnimationCompress", 0f, 1f / 10);
+            return;
+        }
+        // else
+        secondaryGun.gun.Stop();
+        shapeModule.radius *= 2;
+        secondaryGun.gun.Play();
+
+        animationCounter++;
+    }
+
+    /// <summary>
+    /// Compress current gun by decreasing particle system radius
+    /// Has be called with invoke repeating and takes 10 iterations to finished. Divide total time by 10 for time repeat 
+    /// </summary>
+    private void ChangeCurrentGunAnimationCompress()
+    {
+        if (animationCounter >= 10)
+        {
+            animationCounter = 0;
+            CancelInvoke("ChangeCurrentGunAnimationCompress");
+
+            shapeModule.radius = currentGun.originalGunRadius;
+            isAnimInProgress = false;
+            return;
+        }
+        // else
+        currentGun.gun.Stop();
+        shapeModule.radius /= 2;
+        currentGun.gun.Play();
+
+        animationCounter++;
     }
 
     public void PlayerInitGun(string _gunName)

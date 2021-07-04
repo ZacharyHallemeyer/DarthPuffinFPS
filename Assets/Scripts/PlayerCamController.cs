@@ -1,33 +1,49 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerCamController : MonoBehaviour
 {
     public Transform playerRotation;
     public Transform orientation;
-    public Rigidbody rb;
-    //public float sensitivity = 100f;
+    public Camera playerCam;
     public float clampAngle = 85f;
+    public InputMaster inputMaster;
 
     private float verticleRotation;
     private float horizontalRotation;
 
     // Camera
-    public Transform playerCamPosition;
+    //public Transform playerCamPosition;
     private float mouseX;
     private float mouseY;
     private float xRotation;
     private float desiredX;
     private float normalFOV = 60;
     private float adsFOV = 40;
-    public float sensitivity = 2000f;
+    private float sensitivity = 2000f;
     private float normalSensitivity = 2000f;
     private float adsSensitivity = 500f;
     // Default value for sens multipliers are 1 
 
     public float sensMultiplier { get; set; } = 1f;
     public float adsSensMultiplier { get; set; } = 1f;
+
+    private void Awake()
+    {
+        inputMaster = new InputMaster();
+    }
+
+    public void OnEnable()
+    {
+        inputMaster.Enable();
+    }
+
+    public void OnDisable()
+    {
+        inputMaster.Disable();
+    }
 
     private void Start()
     {
@@ -40,7 +56,7 @@ public class PlayerCamController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (inputMaster.Player.Escape.triggered)
             ToggleCursorMode();
         if (Cursor.lockState == CursorLockMode.Locked)
             Look();
@@ -52,8 +68,10 @@ public class PlayerCamController : MonoBehaviour
 
     private void Look()
     {
-        mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime * sensMultiplier;
-        mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime * sensMultiplier;
+        mouseX = playerCam.ScreenToViewportPoint(inputMaster.Player.MouseLook.ReadValue<Vector2>()).x 
+                 * sensitivity * Time.deltaTime * sensMultiplier;
+        mouseY = playerCam.ScreenToViewportPoint(inputMaster.Player.MouseLook.ReadValue<Vector2>()).y
+                 * sensitivity * Time.deltaTime * sensMultiplier;
 
         //Find current look rotation
         Vector3 rot = transform.localRotation.eulerAngles;

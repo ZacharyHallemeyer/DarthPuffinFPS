@@ -115,15 +115,30 @@ public class ClientHandle : MonoBehaviour
 
     public static void PlayerSingleFire(Packet _packet)
     {
+        Debug.Log("Single fire data recieved");
         int _fromId = _packet.ReadInt();
-        GameManager.players[_fromId].PlayerStartSingleFireAnim();
+        int _currentAmmo = _packet.ReadInt();
+        int _reserveAmmo = _packet.ReadInt();
+        GameManager.players[_fromId].PlayerStartSingleFireAnim(_currentAmmo, _reserveAmmo);
     }
 
-    public static void PlayerAutomaticFire(Packet _packet)
+    public static void PlayerStartAutomaticFire(Packet _packet)
     {
+        Debug.Log("Start Automatic fire data recieved");
         int _fromId = _packet.ReadInt();
-        GameManager.players[_fromId].PlayerStartAutomaticFireAnim();
+        int _currentAmmo = _packet.ReadInt();
+        int _reserveAmmo = _packet.ReadInt();
+        GameManager.players[_fromId].PlayerStartAutomaticFireAnim(_currentAmmo, _reserveAmmo);
     }
+
+    public static void PlayerContinueAutomaticFire(Packet _packet)
+    {
+        Debug.Log("Continue Automatic fire data recieved");
+        int _fromId = _packet.ReadInt();
+        int _currentAmmo = _packet.ReadInt();
+        int _reserveAmmo = _packet.ReadInt();
+        GameManager.players[_fromId].PlayerContinueAutomaticFireAnim(_currentAmmo, _reserveAmmo);
+    }   
 
     public static void PlayerStopAutomaticFire(Packet _packet)
     {
@@ -134,12 +149,18 @@ public class ClientHandle : MonoBehaviour
     public static void PlayerReload(Packet _packet)
     {
         int _fromId = _packet.ReadInt();
-        GameManager.players[_fromId].PlayerStartReloadAnim();
+        int _currentAmmo = _packet.ReadInt();
+        int _reserveAmmo = _packet.ReadInt();
+        GameManager.players[_fromId].PlayerStartReloadAnim(_currentAmmo, _reserveAmmo);
     }
 
     public static void PlayerSwitchWeapon(Packet _packet)
     {
         int _fromId = _packet.ReadInt();
-        GameManager.players[_fromId].PlayerStartSwitchWeaponAnim();
+        int _currentAmmo = _packet.ReadInt();
+        int _reserveAmmo = _packet.ReadInt();
+        string _newGunName = _packet.ReadString();
+
+        GameManager.players[_fromId].PlayerStartSwitchWeaponAnim(_newGunName, _currentAmmo, _reserveAmmo);
     }
 }

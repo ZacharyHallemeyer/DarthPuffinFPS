@@ -34,13 +34,16 @@ public class ClientSend : MonoBehaviour
 
     /// <summary>Sends player input to the server.</summary>
     /// <param name="_inputs"></param>
-    public static void PlayerMovement(bool[] _inputsBool, bool _isAnimInProgress)
+    public static void PlayerMovement(Vector2 _moveDirection, bool _isAnimInProgress)
     {
         using (Packet _packet = new Packet((int)ClientPackets.playerMovement))
         {
+            /*
             _packet.Write(_inputsBool.Length);
             foreach (bool _input in _inputsBool)
                 _packet.Write(_input);
+            */
+            _packet.Write(_moveDirection);
             // Orientation needs to be the first child of player
             _packet.Write(GameManager.players[Client.instance.myId].transform.GetChild(0).transform.localRotation);
             _packet.Write(_isAnimInProgress);
@@ -76,6 +79,7 @@ public class ClientSend : MonoBehaviour
 
             SendTCPData(_packet);
         }
+        Debug.Log("Player start shoot data sent");
     }
 
     public static void PlayerStopShoot()
@@ -86,12 +90,18 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-    public static void PlayerShoot(Vector3 _facing)
+    public static void PlayerReload()
     {
-        using (Packet _packet = new Packet((int)ClientPackets.playerStartShoot))
+        using (Packet _packet = new Packet((int)ClientPackets.playerReload))
         {
-            _packet.Write(_facing);
+            SendTCPData(_packet);
+        }
+    }
 
+    public static void PlayerSwitchWeapon()
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.playerSwitchWeapon))
+        {
             SendTCPData(_packet);
         }
     }
