@@ -23,6 +23,7 @@ public class ClientHandle : MonoBehaviour
         string _username = _packet.ReadString();
         Vector3 _position = _packet.ReadVector3();
         Quaternion _rotation = _packet.ReadQuaternion();
+        //string _currentGunName = _packet.ReadString()
 
         GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation);
     }
@@ -99,5 +100,50 @@ public class ClientHandle : MonoBehaviour
         int _id = _packet.ReadInt();
 
         GameManager.players[_id].StopGrapple();
+    }
+
+    public static void OtherPlayerSwitchedWeapon(Packet _packet)
+    {
+        int _fromId = _packet.ReadInt();
+        string _gunName = _packet.ReadString();
+
+        GameManager.players[_fromId].ShowActiveWeapon(_gunName);
+    }
+
+    public static void PlayerSingleFire(Packet _packet)
+    {
+        int _fromId = _packet.ReadInt();
+        GameManager.players[_fromId].PlayerStartSingleFireAnim();
+    }
+
+    public static void PlayerAutomaticFire(Packet _packet)
+    {
+        int _fromId = _packet.ReadInt();
+        GameManager.players[_fromId].PlayerStartAutomaticFireAnim();
+    }
+
+    public static void PlayerStopAutomaticFire(Packet _packet)
+    {
+        int _fromId = _packet.ReadInt();
+        GameManager.players[_fromId].PlayerStopAutomaticFireAnim();
+    }
+
+    public static void PlayerReload(Packet _packet)
+    {
+        int _fromId = _packet.ReadInt();
+        GameManager.players[_fromId].PlayerStartReloadAnim();
+    }
+
+    public static void PlayerSwitchWeapon(Packet _packet)
+    {
+        int _fromId = _packet.ReadInt();
+        GameManager.players[_fromId].PlayerStartSwitchWeaponAnim();
+    }
+
+    public static void PlayerInitGun(Packet _packet)
+    {
+        int _id = _packet.ReadInt();
+        string _gunName = _packet.ReadString();
+        GameManager.players[_id].PlayerInitGun(_gunName);
     }
 }

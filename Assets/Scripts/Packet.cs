@@ -18,7 +18,14 @@ public enum ServerPackets
     createNewPlanet,
     createBoundary,
     playerStartGrapple,
-    playerStopGrapple
+    playerStopGrapple,
+    otherPlayerSwitchedWeapon,
+    playerSinglefire,
+    playerAutomaticfire,
+    playerStopAutomaticFire,
+    playerReload,
+    playerSwitchWeapon,
+    playerInitGun,
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -28,7 +35,8 @@ public enum ClientPackets
     playerMovement,
     playerStartGrapple,
     playerStopGrapple,
-    playerShoot,
+    playerStartShoot,
+    playerStopShoot,
     playerThrowItem
 }
 

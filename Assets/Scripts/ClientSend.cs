@@ -34,7 +34,7 @@ public class ClientSend : MonoBehaviour
 
     /// <summary>Sends player input to the server.</summary>
     /// <param name="_inputs"></param>
-    public static void PlayerMovement(bool[] _inputsBool, Vector2[] _inputsVector2)
+    public static void PlayerMovement(bool[] _inputsBool, Vector2[] _inputsVector2, bool _isAnimInProgress)
     {
         using (Packet _packet = new Packet((int)ClientPackets.playerMovement))
         {
@@ -48,10 +48,11 @@ public class ClientSend : MonoBehaviour
             {
                 _packet.Write(_input);
             }
-            //_packet.Write(GameManager.players[Client.instance.myId].transform.rotation);
+            
             // Orientation needs to be the first child of player
             _packet.Write(GameManager.players[Client.instance.myId].transform.GetChild(0).transform.localRotation);
-            Quaternion testing = GameManager.players[Client.instance.myId].transform.GetChild(0).transform.localRotation;
+
+            _packet.Write(_isAnimInProgress);
 
             SendUDPData(_packet);
         }
@@ -69,8 +70,26 @@ public class ClientSend : MonoBehaviour
 
     public static void PlayerStopGrapple()
     {
-        Debug.Log("Player stop grapple static method is called");
         using (Packet _packet = new Packet((int)ClientPackets.playerStopGrapple))
+        {
+            SendTCPData(_packet);
+        }
+    }
+
+    public static void PlayerStartShoot(Vector3 _firePoint, Vector3 _fireDirection)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.playerStartShoot))
+        {
+            _packet.Write(_firePoint);
+            _packet.Write(_fireDirection);
+
+            SendTCPData(_packet);
+        }
+    }
+
+    public static void PlayerStopShoot()
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.playerStopShoot))
         {
             SendTCPData(_packet);
         }
@@ -78,7 +97,7 @@ public class ClientSend : MonoBehaviour
 
     public static void PlayerShoot(Vector3 _facing)
     {
-        using (Packet _packet = new Packet((int)ClientPackets.playerShoot))
+        using (Packet _packet = new Packet((int)ClientPackets.playerStartShoot))
         {
             _packet.Write(_facing);
 

@@ -45,6 +45,9 @@ public class PlayerCamController : MonoBehaviour
         if (Cursor.lockState == CursorLockMode.Locked)
             Look();
         Debug.DrawRay(transform.position, transform.forward * 2, Color.green);
+
+        // ADS 
+            // TODO
     }
 
     private void Look()
@@ -62,9 +65,7 @@ public class PlayerCamController : MonoBehaviour
 
         // Perform the rotations
         transform.localRotation = Quaternion.Euler(xRotation, desiredX, 0);
-        //rb.MoveRotation(Quaternion.Euler(xRotation, desiredX, 0));
         orientation.localRotation = Quaternion.Euler(0, desiredX, 0);
-        // Make the server handle camera rotation (empty game object on server side) so that player can shoot from cam forward on server
     }
 
     private void ToggleCursorMode()

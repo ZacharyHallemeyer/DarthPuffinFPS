@@ -284,6 +284,14 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.createBoundary, ClientHandle.CreateBoundary },
             { (int)ServerPackets.playerStartGrapple, ClientHandle.PlayerStartGrapple },
             { (int)ServerPackets.playerStopGrapple, ClientHandle.PlayerStopGrapple },
+            { (int)ServerPackets.otherPlayerSwitchedWeapon, ClientHandle.OtherPlayerSwitchedWeapon },
+            { (int)ServerPackets.playerSinglefire, ClientHandle.PlayerSingleFire },
+            { (int)ServerPackets.playerAutomaticfire, ClientHandle.PlayerAutomaticFire },
+            { (int)ServerPackets.playerStopAutomaticFire, ClientHandle.PlayerStopAutomaticFire },
+            { (int)ServerPackets.playerReload, ClientHandle.PlayerReload },
+            { (int)ServerPackets.playerSwitchWeapon, ClientHandle.PlayerSwitchWeapon },
+            { (int)ServerPackets.playerInitGun, ClientHandle.PlayerInitGun },
+
         };
         Debug.Log("Initialized packets.");
     }
