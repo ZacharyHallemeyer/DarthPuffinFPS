@@ -23,9 +23,10 @@ public class ClientHandle : MonoBehaviour
         string _username = _packet.ReadString();
         Vector3 _position = _packet.ReadVector3();
         Quaternion _rotation = _packet.ReadQuaternion();
+        string _gunName = _packet.ReadString();
         //string _currentGunName = _packet.ReadString()
 
-        GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation);
+        GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation, _gunName);
     }
 
     public static void PlayerPosition(Packet _packet)
@@ -104,10 +105,12 @@ public class ClientHandle : MonoBehaviour
 
     public static void OtherPlayerSwitchedWeapon(Packet _packet)
     {
+        Debug.Log("Other Player switch weapon called"); 
         int _fromId = _packet.ReadInt();
+        int _toId = _packet.ReadInt();
         string _gunName = _packet.ReadString();
 
-        GameManager.players[_fromId].ShowActiveWeapon(_gunName);
+        GameManager.players[_toId].ShowOtherPlayerActiveWeapon(_fromId, _gunName);
     }
 
     public static void PlayerSingleFire(Packet _packet)
@@ -138,12 +141,5 @@ public class ClientHandle : MonoBehaviour
     {
         int _fromId = _packet.ReadInt();
         GameManager.players[_fromId].PlayerStartSwitchWeaponAnim();
-    }
-
-    public static void PlayerInitGun(Packet _packet)
-    {
-        int _id = _packet.ReadInt();
-        string _gunName = _packet.ReadString();
-        GameManager.players[_id].PlayerInitGun(_gunName);
     }
 }

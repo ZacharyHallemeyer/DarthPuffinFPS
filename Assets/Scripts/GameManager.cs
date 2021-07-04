@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
     /// <param name="_username"> client username </param>
     /// <param name="_position"> player spawn position </param>
     /// <param name="_rotation"> player spawn rotation </param>
-    public void SpawnPlayer(int _id, string _username, Vector3 _position, Quaternion _rotation)
+    public void SpawnPlayer(int _id, string _username, Vector3 _position, Quaternion _rotation, string _gunName)
     {
         GameObject _player;
         if (_id == Client.instance.myId)
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
         else
             _player = Instantiate(playerPrefab, _position, _rotation);
 
-        _player.GetComponent<PlayerManager>().Initialize(_id, _username);
+        _player.GetComponent<PlayerManager>().Initialize(_id, _username, _gunName);
         players.Add(_id, _player.GetComponent<PlayerManager>());
     }
 

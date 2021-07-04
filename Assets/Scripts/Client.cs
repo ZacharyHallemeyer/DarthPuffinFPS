@@ -290,8 +290,6 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.playerStopAutomaticFire, ClientHandle.PlayerStopAutomaticFire },
             { (int)ServerPackets.playerReload, ClientHandle.PlayerReload },
             { (int)ServerPackets.playerSwitchWeapon, ClientHandle.PlayerSwitchWeapon },
-            { (int)ServerPackets.playerInitGun, ClientHandle.PlayerInitGun },
-
         };
         Debug.Log("Initialized packets.");
     }

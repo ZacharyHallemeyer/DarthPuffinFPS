@@ -56,12 +56,21 @@ public class PlayerManager : MonoBehaviour
     public GameObject[] gunObjects;
     public bool isAnimInProgress;
 
-    public void Initialize(int _id, string _username)
+    // Testing
+    //public string currentGunString;
+
+    #region Set Up
+
+    public void Initialize(int _id, string _username, string _gunName)
     {
         id = _id;
         username = _username;
         health = maxHealth;
+        //currentGunString = _gunName;
         SetGunInformation();
+        PlayerInitGun(_gunName);
+        if (gameObject.name != "LocalPlayer(Clone)")
+            enabled = false;
     }
 
     public void SetGunInformation()
@@ -111,13 +120,14 @@ public class PlayerManager : MonoBehaviour
         };
     }
 
+    #endregion
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
             ClientSend.PlayerStartShoot(playerCam.transform.position, playerCam.transform.forward);
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
-            Debug.Log("This is a problem");
             ClientSend.PlayerStopShoot();
         }
 
@@ -181,13 +191,10 @@ public class PlayerManager : MonoBehaviour
             Input.GetKey(KeyCode.Alpha1),
         };
 
-        Vector2[] _inputVector2 = new Vector2[]
-        {
-            new Vector2(Input.GetAxis("Mouse X"), -Input.GetAxis("Mouse Y"))
-        };
-
-        ClientSend.PlayerMovement(_inputsBools, _inputVector2, isAnimInProgress);
+        ClientSend.PlayerMovement(_inputsBools, isAnimInProgress);
     }
+
+    #region Grapple
 
     public void StartGrapple()
     {
@@ -209,6 +216,8 @@ public class PlayerManager : MonoBehaviour
         lineRenderer.positionCount = 0;
     }
 
+    #endregion 
+
     public void RotatePlayerAccordingToGravity(Collider _gravityObjectCollider)
     {
         Transform _gravityObject = _gravityObjectCollider.transform;
@@ -217,22 +226,7 @@ public class PlayerManager : MonoBehaviour
         transform.localRotation = desiredRotation;
     }
 
-    public void ShowActiveWeapon(string _gunName)
-    {
-        foreach (GameObject _gun in gunObjects)
-        {
-            if (_gun.name == _gunName)
-            {
-                currentGun.gunContainer.SetActive(false);
-                foreach(GunInformation _gunInfo in allGunInformation.Values)
-                {
-                    if (_gun.name == _gunInfo.name)
-                        currentGun = _gunInfo;
-                }
-                currentGun.gunContainer.SetActive(true);
-            }
-        }
-    }
+    #region Guns
 
     public void PlayerStartSingleFireAnim()
     {
@@ -312,4 +306,24 @@ public class PlayerManager : MonoBehaviour
         currentGun.gunContainer.SetActive(true);
         shapeModule = currentGun.gun.shape;
     }
+
+    public void ShowOtherPlayerActiveWeapon(int _id, string _gunName)
+    {
+        if (GameManager.players.TryGetValue(_id, out PlayerManager _player))
+        {
+            _player = GameManager.players[_id];
+        }
+        else return;
+
+        foreach (GunInformation _gunInfo in _player.allGunInformation.Values)
+        {
+            if (_player.allGunInformation[_gunInfo.name].gunContainer.activeSelf == true)
+                _player.allGunInformation[_gunInfo.name].gunContainer.SetActive(false);
+            if (_gunInfo.name == _gunName)
+                _player.currentGun = _gunInfo;
+        }
+        _player.currentGun.gunContainer.SetActive(true);
+    }
+
+    #endregion
 }
