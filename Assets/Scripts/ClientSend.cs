@@ -38,16 +38,29 @@ public class ClientSend : MonoBehaviour
     {
         using (Packet _packet = new Packet((int)ClientPackets.playerMovement))
         {
-            /*
-            _packet.Write(_inputsBool.Length);
-            foreach (bool _input in _inputsBool)
-                _packet.Write(_input);
-            */
             _packet.Write(_moveDirection);
             // Orientation needs to be the first child of player
             _packet.Write(GameManager.players[Client.instance.myId].transform.GetChild(0).transform.localRotation);
             _packet.Write(_isAnimInProgress);
 
+            SendUDPData(_packet);
+        }
+    }
+
+    public static void PlayerJetPackMovement(Vector3 _direction)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.playerJetPackMovement))
+        {
+            _packet.Write(_direction);
+
+            SendUDPData(_packet);
+        }
+    }
+
+    public static void PlayerMagnetize()
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.playerMagnetize))
+        {
             SendUDPData(_packet);
         }
     }
@@ -79,7 +92,6 @@ public class ClientSend : MonoBehaviour
 
             SendTCPData(_packet);
         }
-        Debug.Log("Player start shoot data sent");
     }
 
     public static void PlayerStopShoot()

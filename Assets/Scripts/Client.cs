@@ -283,6 +283,7 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.createNewPlanet, ClientHandle.CreateNewPlanet },
             { (int)ServerPackets.createBoundary, ClientHandle.CreateBoundary },
             { (int)ServerPackets.playerStartGrapple, ClientHandle.PlayerStartGrapple },
+            { (int)ServerPackets.playerContinueGrapple, ClientHandle.PlayerContinueGrapple },
             { (int)ServerPackets.playerStopGrapple, ClientHandle.PlayerStopGrapple },
             { (int)ServerPackets.otherPlayerSwitchedWeapon, ClientHandle.OtherPlayerSwitchedWeapon },
             { (int)ServerPackets.playerSinglefire, ClientHandle.PlayerSingleFire },
@@ -291,6 +292,7 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.playerStopAutomaticFire, ClientHandle.PlayerStopAutomaticFire },
             { (int)ServerPackets.playerReload, ClientHandle.PlayerReload },
             { (int)ServerPackets.playerSwitchWeapon, ClientHandle.PlayerSwitchWeapon },
+            { (int)ServerPackets.playerContinueJetPack, ClientHandle.PlayerContinueJetPack },
         };
         Debug.Log("Initialized packets.");
     }

@@ -58,7 +58,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 02f83d044e5f1254f88666bd2d5868c0, type: 2}
+  - {fileID: 2100000, guid: 0609d83d68e32364bad29c10ad24f2f4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -159,7 +159,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5134376277894503642
 Transform:
   m_ObjectHideFlags: 0
@@ -292,6 +292,7 @@ MonoBehaviour:
   itemCount: 0
   model: {fileID: 3779463834754585854}
   playerCam: {fileID: 0}
+  playerUI: {fileID: 0}
   lineRenderer: {fileID: 0}
   isGrappling: 0
   releasedGrappleControlSinceLastGrapple: 1
@@ -316,6 +317,7 @@ MonoBehaviour:
   isAnimInProgress: 0
   isShooting: 0
   animationCounter: 0
+  timeSinceLastShoot: 0
 --- !u!1 &4385459633073700759
 GameObject:
   m_ObjectHideFlags: 0

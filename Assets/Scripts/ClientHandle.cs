@@ -24,9 +24,13 @@ public class ClientHandle : MonoBehaviour
         Vector3 _position = _packet.ReadVector3();
         Quaternion _rotation = _packet.ReadQuaternion();
         string _gunName = _packet.ReadString();
-        //string _currentGunName = _packet.ReadString()
+        int _currentAmmo = _packet.ReadInt();
+        int _reserveAmmo = _packet.ReadInt();
+        float _maxGrappleTime = _packet.ReadFloat();
+        float _maxJetPackTime = _packet.ReadFloat();
 
-        GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation, _gunName);
+        GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation, _gunName, _currentAmmo, 
+                                         _reserveAmmo, _maxGrappleTime, _maxJetPackTime);
     }
 
     public static void PlayerPosition(Packet _packet)
@@ -96,6 +100,14 @@ public class ClientHandle : MonoBehaviour
         GameManager.players[_id].StartGrapple();
     }
 
+    public static void PlayerContinueGrapple(Packet _packet)
+    {
+        int _id = _packet.ReadInt();
+        float _currentGrappleTime = _packet.ReadFloat();
+
+        GameManager.players[_id].ContinueGrapple(_currentGrappleTime);
+    }
+
     public static void PlayerStopGrapple(Packet _packet)
     {
         int _id = _packet.ReadInt();
@@ -105,7 +117,6 @@ public class ClientHandle : MonoBehaviour
 
     public static void OtherPlayerSwitchedWeapon(Packet _packet)
     {
-        Debug.Log("Other Player switch weapon called"); 
         int _fromId = _packet.ReadInt();
         int _toId = _packet.ReadInt();
         string _gunName = _packet.ReadString();
@@ -115,7 +126,6 @@ public class ClientHandle : MonoBehaviour
 
     public static void PlayerSingleFire(Packet _packet)
     {
-        Debug.Log("Single fire data recieved");
         int _fromId = _packet.ReadInt();
         int _currentAmmo = _packet.ReadInt();
         int _reserveAmmo = _packet.ReadInt();
@@ -124,7 +134,6 @@ public class ClientHandle : MonoBehaviour
 
     public static void PlayerStartAutomaticFire(Packet _packet)
     {
-        Debug.Log("Start Automatic fire data recieved");
         int _fromId = _packet.ReadInt();
         int _currentAmmo = _packet.ReadInt();
         int _reserveAmmo = _packet.ReadInt();
@@ -133,7 +142,6 @@ public class ClientHandle : MonoBehaviour
 
     public static void PlayerContinueAutomaticFire(Packet _packet)
     {
-        Debug.Log("Continue Automatic fire data recieved");
         int _fromId = _packet.ReadInt();
         int _currentAmmo = _packet.ReadInt();
         int _reserveAmmo = _packet.ReadInt();
@@ -162,5 +170,13 @@ public class ClientHandle : MonoBehaviour
         string _newGunName = _packet.ReadString();
 
         GameManager.players[_fromId].PlayerStartSwitchWeaponAnim(_newGunName, _currentAmmo, _reserveAmmo);
+    }
+
+    public static void PlayerContinueJetPack(Packet _packet)
+    {
+        int _fromId = _packet.ReadInt();
+        float _jetPackTime = _packet.ReadFloat();
+
+        GameManager.players[_fromId].PlayerContinueJetPack(_jetPackTime);
     }
 }

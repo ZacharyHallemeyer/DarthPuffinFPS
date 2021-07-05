@@ -68,16 +68,23 @@ public class PlayerManager : MonoBehaviour
 
     #region Set Up
 
-    public void Initialize(int _id, string _username, string _gunName)
+    public void Initialize(int _id, string _username, string _gunName, int _currentAmmo, int _reserveAmmo,
+                           float _maxGrappleTime, float _maxJetPackTime)
     {
         id = _id;
         username = _username;
         health = maxHealth;
         //currentGunString = _gunName;
         SetGunInformation();
-        PlayerInitGun(_gunName);
         if (gameObject.name != "LocalPlayer(Clone)")
+        {
             enabled = false;
+            return;
+        }
+        PlayerInitGun(_gunName, _currentAmmo, _reserveAmmo);
+        playerUI.SetMaxGrapple(_maxGrappleTime);
+        playerUI.SetMaxJetPack(_maxJetPackTime);
+
     }
 
     private void Awake()
@@ -169,6 +176,16 @@ public class PlayerManager : MonoBehaviour
         if (Physics.OverlapSphere(transform.position, 10, LayerMask.GetMask("GravityObject")).Length != 0)
             RotatePlayerAccordingToGravity(Physics.OverlapSphere(transform.position, 10, LayerMask.GetMask("GravityObject"))[0]);
 
+        // Jetpack up and down
+        if (inputMaster.Player.Jump.ReadValue<float>() != 0)
+            ClientSend.PlayerJetPackMovement(orientation.up);
+        if (inputMaster.Player.Crouch.ReadValue<float>() != 0)
+            ClientSend.PlayerJetPackMovement(-orientation.up);
+
+        // Magnitize
+        if (inputMaster.Player.Magnetize.triggered)
+            ClientSend.PlayerMagnetize();
+
         // Handle Guns
         if (isAnimInProgress) return;
 
@@ -222,19 +239,6 @@ public class PlayerManager : MonoBehaviour
     {
         Vector2 _moveDirection = inputMaster.Player.Movement.ReadValue<Vector2>();
 
-        /*
-        bool[] _inputsBools = new bool[]
-        {
-            Input.GetKey(KeyCode.W),
-            Input.GetKey(KeyCode.S),
-            Input.GetKey(KeyCode.A),
-            Input.GetKey(KeyCode.D),
-            Input.GetKey(KeyCode.Space),
-            Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.Mouse4),
-            Input.GetKey(KeyCode.Alpha1),
-        };
-        */
-
         ClientSend.PlayerMovement(_moveDirection, isAnimInProgress);
     }
 
@@ -253,6 +257,11 @@ public class PlayerManager : MonoBehaviour
     {
         lineRenderer.SetPosition(0, transform.position);
         lineRenderer.SetPosition(1, grapplePoint);
+    }
+
+    public void ContinueGrapple(float _currentGrappleTime)
+    {
+        playerUI.SetGrapple(_currentGrappleTime);
     }
 
     public void StopGrapple()
@@ -304,7 +313,7 @@ public class PlayerManager : MonoBehaviour
     public void PlayerContinueAutomaticFireAnim(int _currentAmmo, int _reserveAmmo)
     {
         playerUI.ChangeGunUIText(_currentAmmo, _reserveAmmo);
-        currentGun.gun.Play();
+        currentGun.bullet.Play();
     }
 
     public void PlayerStartReloadAnim(int _currentAmmo, int _reserveAmmo)
@@ -421,7 +430,7 @@ public class PlayerManager : MonoBehaviour
         animationCounter++;
     }
 
-    public void PlayerInitGun(string _gunName)
+    public void PlayerInitGun(string _gunName, int _currentAmmo, int _reserveAmmo)
     {
         foreach (GunInformation _gunInfo in allGunInformation.Values)
         {
@@ -430,6 +439,9 @@ public class PlayerManager : MonoBehaviour
         }
         currentGun.gunContainer.SetActive(true);
         shapeModule = currentGun.gun.shape;
+        if (playerUI == null)
+            playerUI = FindObjectOfType<PlayerUI>();
+        playerUI.ChangeGunUIText(_currentAmmo, _reserveAmmo);
     }
 
     public void ShowOtherPlayerActiveWeapon(int _id, string _gunName)
@@ -448,6 +460,15 @@ public class PlayerManager : MonoBehaviour
                 _player.currentGun = _gunInfo;
         }
         _player.currentGun.gunContainer.SetActive(true);
+    }
+
+    #endregion
+
+    #region Jetpack
+
+    public void PlayerContinueJetPack(float _jetPackTime)
+    {
+        playerUI.SetJetPack(_jetPackTime);
     }
 
     #endregion

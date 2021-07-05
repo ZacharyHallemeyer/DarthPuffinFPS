@@ -70,7 +70,7 @@ public class PlayerUI : MonoBehaviour
     public void SetJetPack(float jetPackTime)
     {
         jetPackSlider.value = jetPackTime;
-        jetPackFill.color = jetPackGradient.Evaluate(grappleSlider.normalizedValue);
+        jetPackFill.color = jetPackGradient.Evaluate(jetPackSlider.normalizedValue);
     }
 
     // End of Jet Pack =====================
