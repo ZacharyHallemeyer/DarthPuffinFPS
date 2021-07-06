@@ -63,6 +63,14 @@ public class ClientHandle : MonoBehaviour
         GameManager.players.Remove(_id);
     }
 
+    public static void OtherPlayerTakenDamage(Packet _packet)
+    {
+        int _fromId = _packet.ReadInt();
+        int _toId = _packet.ReadInt();
+
+        GameManager.players[_toId].OtherPlayerTakenDamage(_fromId);
+    }
+
     public static void PlayerHealth(Packet _packet)
     {
         int _id = _packet.ReadInt();
@@ -106,6 +114,24 @@ public class ClientHandle : MonoBehaviour
         float _currentGrappleTime = _packet.ReadFloat();
 
         GameManager.players[_id].ContinueGrapple(_currentGrappleTime);
+    }
+
+    public static void OtherPlayerContinueGrapple(Packet _packet)
+    {
+        int _fromId = _packet.ReadInt();
+        int _toId = _packet.ReadInt();
+        Vector3 _position = _packet.ReadVector3();
+        Vector3 _grapplePoint = _packet.ReadVector3();
+
+        GameManager.players[_toId].DrawOtherPlayerRope(_fromId, _position, _grapplePoint);
+    }
+
+    public static void OtherPlayerStopGrapple(Packet _packet)
+    {
+        int _fromId = _packet.ReadInt();
+        int _toId = _packet.ReadInt();
+
+        GameManager.players[_toId].ClearOtherPlayerRope(_fromId);
     }
 
     public static void PlayerStopGrapple(Packet _packet)
@@ -170,6 +196,14 @@ public class ClientHandle : MonoBehaviour
         string _newGunName = _packet.ReadString();
 
         GameManager.players[_fromId].PlayerStartSwitchWeaponAnim(_newGunName, _currentAmmo, _reserveAmmo);
+    }
+
+    public static void PlayerShotLanded(Packet _packet)
+    {
+        int _fromId = _packet.ReadInt();
+        Vector3 _hitPoint = _packet.ReadVector3();
+
+        GameManager.players[_fromId].PlayerShotLanded(_hitPoint);
     }
 
     public static void PlayerContinueJetPack(Packet _packet)

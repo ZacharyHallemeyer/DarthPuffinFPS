@@ -50,10 +50,9 @@ public class PlayerManager : MonoBehaviour
     public ParticleSystem ar;
     public ParticleSystem shotgun;
 
-    public GameObject shotHitParitcleGameObject;
-    public ParticleSystem shotHitParticle;
-    public GameObject[] shotgunHitParticleGameObjects;
-    public ParticleSystem[] shotgunHitParticles;
+    public GameObject[] hitParticleGameObjects;
+    public ParticleSystem[] hitParticles;
+    private int particleIndex = 0;
 
     public GunInformation currentGun, secondaryGun;
     private ParticleSystem.ShapeModule shapeModule;
@@ -197,8 +196,9 @@ public class PlayerManager : MonoBehaviour
                 ClientSend.PlayerStartShoot(playerCam.transform.position, playerCam.transform.forward);
             }
         }
-        if(isShooting && !isAnimInProgress)
+        if(isShooting)
         {
+            ClientSend.PlayerUpdateShootDirection(playerCam.transform.position, playerCam.transform.forward);
             if (inputMaster.Player.Shoot.ReadValue<float>() == 0)
                 ClientSend.PlayerStopShoot();
         }
@@ -222,6 +222,11 @@ public class PlayerManager : MonoBehaviour
         {
             Die();
         }
+    }
+
+    public void OtherPlayerTakenDamage(int _otherPlayerId)
+    {
+        Debug.Log("OUCH!");
     }
 
     public void Die()
@@ -255,8 +260,21 @@ public class PlayerManager : MonoBehaviour
 
     public void DrawRope()
     {
+        ClientSend.PlayerContinueGrappling(transform.position, grapplePoint);
         lineRenderer.SetPosition(0, transform.position);
         lineRenderer.SetPosition(1, grapplePoint);
+    }
+
+    public void DrawOtherPlayerRope(int _otherPlayerId, Vector3 _position, Vector3 _grapplePoint)
+    {
+        lineRenderer.positionCount = 2;
+        GameManager.players[_otherPlayerId].lineRenderer.SetPosition(0, _position);
+        GameManager.players[_otherPlayerId].lineRenderer.SetPosition(1, _grapplePoint);
+    }
+
+    public void ClearOtherPlayerRope(int _otherPlayerId)
+    {
+        lineRenderer.positionCount = 0;
     }
 
     public void ContinueGrapple(float _currentGrappleTime)
@@ -428,6 +446,17 @@ public class PlayerManager : MonoBehaviour
         currentGun.gun.Play();
 
         animationCounter++;
+    }
+
+    public void PlayerShotLanded(Vector3 _hitPoint)
+    {
+        Debug.Log("This is being called");
+        if (particleIndex >= hitParticleGameObjects.Length)
+            particleIndex = 0;
+        hitParticleGameObjects[particleIndex].transform.position = _hitPoint;
+        hitParticles[particleIndex].Play();
+
+        particleIndex++;
     }
 
     public void PlayerInitGun(string _gunName, int _currentAmmo, int _reserveAmmo)

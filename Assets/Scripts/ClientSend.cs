@@ -61,7 +61,7 @@ public class ClientSend : MonoBehaviour
     {
         using (Packet _packet = new Packet((int)ClientPackets.playerMagnetize))
         {
-            SendUDPData(_packet);
+            SendTCPData(_packet);
         }
     }
 
@@ -72,6 +72,17 @@ public class ClientSend : MonoBehaviour
             _packet.Write(_direction);
 
             SendTCPData(_packet);
+        }
+    }
+
+    public static void PlayerContinueGrappling(Vector3 _position, Vector3 _grapplePoint)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.playerContinueGrappling))
+        {
+            _packet.Write(_position);
+            _packet.Write(_grapplePoint);
+
+            SendUDPData(_packet);
         }
     }
 
@@ -91,6 +102,17 @@ public class ClientSend : MonoBehaviour
             _packet.Write(_fireDirection);
 
             SendTCPData(_packet);
+        }
+    }
+
+    public static void PlayerUpdateShootDirection(Vector3 _firePoint, Vector3 _fireDirection)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.playerUpdateShootDirection))
+        {
+            _packet.Write(_firePoint);
+            _packet.Write(_fireDirection);
+
+            SendUDPData(_packet);
         }
     }
 
