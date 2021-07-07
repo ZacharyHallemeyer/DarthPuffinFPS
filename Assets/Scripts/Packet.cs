@@ -40,6 +40,7 @@ public enum ClientPackets
     welcomeReceived = 1,
     playerMovement, 
     playerJetPackMovement,
+    playerActions,
     playerMagnetize,
     playerStartGrapple,
     playerContinueGrappling,

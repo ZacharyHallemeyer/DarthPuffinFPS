@@ -34,13 +34,24 @@ public class ClientSend : MonoBehaviour
 
     /// <summary>Sends player input to the server.</summary>
     /// <param name="_inputs"></param>
-    public static void PlayerMovement(Vector2 _moveDirection, bool _isAnimInProgress)
+    public static void PlayerMovement(Vector2 _moveDirection)
     {
         using (Packet _packet = new Packet((int)ClientPackets.playerMovement))
         {
             _packet.Write(_moveDirection);
             // Orientation needs to be the first child of player
             _packet.Write(GameManager.players[Client.instance.myId].transform.GetChild(0).transform.localRotation);
+
+            SendUDPData(_packet);
+        }
+    }
+
+    /// <summary>Sends player input to the server.</summary>
+    /// <param name="_inputs"></param>
+    public static void PlayerActions(bool _isAnimInProgress)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.playerActions))
+        {
             _packet.Write(_isAnimInProgress);
 
             SendUDPData(_packet);

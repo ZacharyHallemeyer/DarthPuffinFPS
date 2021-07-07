@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public static Dictionary<int, PlayerManager> players = new Dictionary<int, PlayerManager>();
+    public static Dictionary<int, PlayerActions> playersActions = new Dictionary<int, PlayerActions>();
+    public static Dictionary<int, PlayerMovement> playersMovement = new Dictionary<int, PlayerMovement>();
 
     public GameObject localPlayerPrefab;
     public GameObject playerPrefab;
@@ -40,13 +42,30 @@ public class GameManager : MonoBehaviour
     {
         GameObject _player;
         if (_id == Client.instance.myId)
+        {
+            // Local Player
             _player = Instantiate(localPlayerPrefab, _position, _rotation);
+            _player.GetComponent<PlayerActions>().Initialize(_id, _gunName, _currentAmmo, _reserveAmmo, _maxGrappleTime);
+            playersActions.Add(_id, _player.GetComponent<PlayerActions>());
+            _player.GetComponent<PlayerMovement>().Initialize(_id, _maxJetPackTime);
+            playersMovement.Add(_id, _player.GetComponent<PlayerMovement>());
+            _player.GetComponent<PlayerManager>().Initialize(_id, _username);
+            players.Add(_id, _player.GetComponent<PlayerManager>());
+        }
         else
+        {
+            // Not Local Player
             _player = Instantiate(playerPrefab, _position, _rotation);
-
-        _player.GetComponent<PlayerManager>().Initialize(_id, _username, _gunName, _currentAmmo, _reserveAmmo,
-                                                         _maxGrappleTime, _maxJetPackTime);
-        players.Add(_id, _player.GetComponent<PlayerManager>());
+            _player.GetComponent<PlayerManager>().Initialize(_id, _username);
+            players.Add(_id, _player.GetComponent<PlayerManager>());
+            foreach (PlayerManager.GunInformation _gunInfo in GameManager.players[_id].allGunInformation.Values)
+            {
+                if (_gunInfo.name == _gunName)
+                {
+                    _gunInfo.gunContainer.SetActive(true);
+                }
+            }
+        }
     }
 
     /// <summary>

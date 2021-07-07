@@ -105,7 +105,7 @@ public class ClientHandle : MonoBehaviour
     {
         int _id = _packet.ReadInt();
 
-        GameManager.players[_id].StartGrapple();
+        GameManager.playersActions[_id].StartGrapple();
     }
 
     public static void PlayerContinueGrapple(Packet _packet)
@@ -113,7 +113,7 @@ public class ClientHandle : MonoBehaviour
         int _id = _packet.ReadInt();
         float _currentGrappleTime = _packet.ReadFloat();
 
-        GameManager.players[_id].ContinueGrapple(_currentGrappleTime);
+        GameManager.playersActions[_id].ContinueGrapple(_currentGrappleTime);
     }
 
     public static void OtherPlayerContinueGrapple(Packet _packet)
@@ -123,7 +123,7 @@ public class ClientHandle : MonoBehaviour
         Vector3 _position = _packet.ReadVector3();
         Vector3 _grapplePoint = _packet.ReadVector3();
 
-        GameManager.players[_toId].DrawOtherPlayerRope(_fromId, _position, _grapplePoint);
+        GameManager.playersActions[_toId].DrawOtherPlayerRope(_fromId, _position, _grapplePoint);
     }
 
     public static void OtherPlayerStopGrapple(Packet _packet)
@@ -138,7 +138,7 @@ public class ClientHandle : MonoBehaviour
     {
         int _id = _packet.ReadInt();
 
-        GameManager.players[_id].StopGrapple();
+        GameManager.playersActions[_id].StopGrapple();
     }
 
     public static void OtherPlayerSwitchedWeapon(Packet _packet)
@@ -147,7 +147,7 @@ public class ClientHandle : MonoBehaviour
         int _toId = _packet.ReadInt();
         string _gunName = _packet.ReadString();
 
-        GameManager.players[_toId].ShowOtherPlayerActiveWeapon(_fromId, _gunName);
+        GameManager.playersActions[_toId].ShowOtherPlayerActiveWeapon(_fromId, _gunName);
     }
 
     public static void PlayerSingleFire(Packet _packet)
@@ -155,7 +155,7 @@ public class ClientHandle : MonoBehaviour
         int _fromId = _packet.ReadInt();
         int _currentAmmo = _packet.ReadInt();
         int _reserveAmmo = _packet.ReadInt();
-        GameManager.players[_fromId].PlayerStartSingleFireAnim(_currentAmmo, _reserveAmmo);
+        GameManager.playersActions[_fromId].PlayerStartSingleFireAnim(_currentAmmo, _reserveAmmo);
     }
 
     public static void PlayerStartAutomaticFire(Packet _packet)
@@ -163,7 +163,7 @@ public class ClientHandle : MonoBehaviour
         int _fromId = _packet.ReadInt();
         int _currentAmmo = _packet.ReadInt();
         int _reserveAmmo = _packet.ReadInt();
-        GameManager.players[_fromId].PlayerStartAutomaticFireAnim(_currentAmmo, _reserveAmmo);
+        GameManager.playersActions[_fromId].PlayerStartAutomaticFireAnim(_currentAmmo, _reserveAmmo);
     }
 
     public static void PlayerContinueAutomaticFire(Packet _packet)
@@ -171,13 +171,13 @@ public class ClientHandle : MonoBehaviour
         int _fromId = _packet.ReadInt();
         int _currentAmmo = _packet.ReadInt();
         int _reserveAmmo = _packet.ReadInt();
-        GameManager.players[_fromId].PlayerContinueAutomaticFireAnim(_currentAmmo, _reserveAmmo);
+        GameManager.playersActions[_fromId].PlayerContinueAutomaticFireAnim(_currentAmmo, _reserveAmmo);
     }   
 
     public static void PlayerStopAutomaticFire(Packet _packet)
     {
         int _fromId = _packet.ReadInt();
-        GameManager.players[_fromId].PlayerStopAutomaticFireAnim();
+        GameManager.playersActions[_fromId].PlayerStopAutomaticFireAnim();
     }
 
     public static void PlayerReload(Packet _packet)
@@ -185,7 +185,7 @@ public class ClientHandle : MonoBehaviour
         int _fromId = _packet.ReadInt();
         int _currentAmmo = _packet.ReadInt();
         int _reserveAmmo = _packet.ReadInt();
-        GameManager.players[_fromId].PlayerStartReloadAnim(_currentAmmo, _reserveAmmo);
+        GameManager.playersActions[_fromId].PlayerStartReloadAnim(_currentAmmo, _reserveAmmo);
     }
 
     public static void PlayerSwitchWeapon(Packet _packet)
@@ -195,7 +195,7 @@ public class ClientHandle : MonoBehaviour
         int _reserveAmmo = _packet.ReadInt();
         string _newGunName = _packet.ReadString();
 
-        GameManager.players[_fromId].PlayerStartSwitchWeaponAnim(_newGunName, _currentAmmo, _reserveAmmo);
+        GameManager.playersActions[_fromId].PlayerStartSwitchWeaponAnim(_newGunName, _currentAmmo, _reserveAmmo);
     }
 
     public static void PlayerShotLanded(Packet _packet)
@@ -203,7 +203,7 @@ public class ClientHandle : MonoBehaviour
         int _fromId = _packet.ReadInt();
         Vector3 _hitPoint = _packet.ReadVector3();
 
-        GameManager.players[_fromId].PlayerShotLanded(_hitPoint);
+        GameManager.playersActions[_fromId].PlayerShotLanded(_hitPoint);
     }
 
     public static void PlayerContinueJetPack(Packet _packet)
@@ -211,6 +211,6 @@ public class ClientHandle : MonoBehaviour
         int _fromId = _packet.ReadInt();
         float _jetPackTime = _packet.ReadFloat();
 
-        GameManager.players[_fromId].PlayerContinueJetPack(_jetPackTime);
+        GameManager.playersMovement[_fromId].PlayerContinueJetPack(_jetPackTime);
     }
 }
