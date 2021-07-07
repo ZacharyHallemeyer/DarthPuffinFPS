@@ -12,13 +12,22 @@ public class PlayerManager : MonoBehaviour
     public InputMaster inputMaster;
     public PlayerActions playerActions;
     public PlayerMovement playerMovement;
+    public PlayerUI playerUI;
 
     // Materials
     public Material basePlayerMaterial;
     public Material damagedPlayerMaterial;
     public Material deadPlayerMaterial;
 
+    public Shader basePlayerShader;
+    public Shader damagedPlayerShader;
+    public Shader deadPlayerShader;
+
     public LineRenderer lineRenderer;
+
+    // Stats
+    public int currentKills = 0;
+    public int currentDeaths = 0;
 
     // Weapons
     public class GunInformation
@@ -38,9 +47,12 @@ public class PlayerManager : MonoBehaviour
     public void Initialize(int _id, string _username)
     {
         id = _id;
-        username = _username;
+        //username = _username;
+        username = _id.ToString();
         health = maxHealth;
         SetGunInformation();
+        if (name != "LocalPlayer(Clone)")
+            enabled = false;
     }
 
     public void SetGunInformation()
@@ -88,6 +100,12 @@ public class PlayerManager : MonoBehaviour
 
     #endregion
 
+    private void Update()
+    {
+        if (inputMaster.Player.ScoreBoard.triggered)
+            playerUI.ScoreBoard();
+    }
+
     public void SetHealth(float _health)
     {
         health = _health;
@@ -116,11 +134,13 @@ public class PlayerManager : MonoBehaviour
 
     public void Die()
     {
+        model.material.shader = deadPlayerShader;
         model.material = deadPlayerMaterial;
     }
 
     public void Respawn()
     {
+        model.material.shader = basePlayerShader;
         model.material = basePlayerMaterial;
         SetHealth(maxHealth);
     }

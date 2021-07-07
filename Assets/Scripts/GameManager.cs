@@ -37,22 +37,10 @@ public class GameManager : MonoBehaviour
     /// <param name="_position"> player spawn position </param>
     /// <param name="_rotation"> player spawn rotation </param>
     public void SpawnPlayer(int _id, string _username, Vector3 _position, Quaternion _rotation, 
-                            string _gunName, int _currentAmmo, int _reserveAmmo, float _maxGrappleTime, 
-                            float _maxJetPackTime)
+                            string _gunName, int _currentAmmo, int _reserveAmmo, float _maxGrappleTime)
     {
         GameObject _player;
-        if (_id == Client.instance.myId)
-        {
-            // Local Player
-            _player = Instantiate(localPlayerPrefab, _position, _rotation);
-            _player.GetComponent<PlayerActions>().Initialize(_id, _gunName, _currentAmmo, _reserveAmmo, _maxGrappleTime);
-            playersActions.Add(_id, _player.GetComponent<PlayerActions>());
-            _player.GetComponent<PlayerMovement>().Initialize(_id, _maxJetPackTime);
-            playersMovement.Add(_id, _player.GetComponent<PlayerMovement>());
-            _player.GetComponent<PlayerManager>().Initialize(_id, _username);
-            players.Add(_id, _player.GetComponent<PlayerManager>());
-        }
-        else
+        if (_id != Client.instance.myId)
         {
             // Not Local Player
             _player = Instantiate(playerPrefab, _position, _rotation);
@@ -66,6 +54,23 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            // Local Player
+            _player = Instantiate(localPlayerPrefab, _position, _rotation);
+            _player.GetComponent<PlayerActions>().Initialize(_id, _gunName, _currentAmmo, _reserveAmmo, _maxGrappleTime);
+            playersActions.Add(_id, _player.GetComponent<PlayerActions>());
+            _player.GetComponent<PlayerMovement>().Initialize(_id);
+            playersMovement.Add(_id, _player.GetComponent<PlayerMovement>());
+            _player.GetComponent<PlayerManager>().Initialize(_id, _username);
+            players.Add(_id, _player.GetComponent<PlayerManager>());
+        }
+
+        PlayerUI _playerUI = FindObjectOfType<PlayerUI>();
+        if (_playerUI != null)
+            _playerUI.InitScoreBoard();
+
+        
     }
 
     /// <summary>

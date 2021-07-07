@@ -145,6 +145,14 @@ public class @InputMaster : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""ScoreBoard"",
+                    ""type"": ""Button"",
+                    ""id"": ""8ddfdcd2-c108-40a4-877f-6a18e139f17c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -675,6 +683,17 @@ public class @InputMaster : IInputActionCollection, IDisposable
                     ""action"": ""Magnetize"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7ded56f0-eabd-4126-9539-107178feb597"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ScoreBoard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -716,6 +735,7 @@ public class @InputMaster : IInputActionCollection, IDisposable
         m_Player_Escape = m_Player.FindAction("Escape", throwIfNotFound: true);
         m_Player_ADS = m_Player.FindAction("ADS", throwIfNotFound: true);
         m_Player_Magnetize = m_Player.FindAction("Magnetize", throwIfNotFound: true);
+        m_Player_ScoreBoard = m_Player.FindAction("ScoreBoard", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -781,6 +801,7 @@ public class @InputMaster : IInputActionCollection, IDisposable
     private readonly InputAction m_Player_Escape;
     private readonly InputAction m_Player_ADS;
     private readonly InputAction m_Player_Magnetize;
+    private readonly InputAction m_Player_ScoreBoard;
     public struct PlayerActions
     {
         private @InputMaster m_Wrapper;
@@ -801,6 +822,7 @@ public class @InputMaster : IInputActionCollection, IDisposable
         public InputAction @Escape => m_Wrapper.m_Player_Escape;
         public InputAction @ADS => m_Wrapper.m_Player_ADS;
         public InputAction @Magnetize => m_Wrapper.m_Player_Magnetize;
+        public InputAction @ScoreBoard => m_Wrapper.m_Player_ScoreBoard;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -858,6 +880,9 @@ public class @InputMaster : IInputActionCollection, IDisposable
                 @Magnetize.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMagnetize;
                 @Magnetize.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMagnetize;
                 @Magnetize.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMagnetize;
+                @ScoreBoard.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnScoreBoard;
+                @ScoreBoard.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnScoreBoard;
+                @ScoreBoard.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnScoreBoard;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -910,6 +935,9 @@ public class @InputMaster : IInputActionCollection, IDisposable
                 @Magnetize.started += instance.OnMagnetize;
                 @Magnetize.performed += instance.OnMagnetize;
                 @Magnetize.canceled += instance.OnMagnetize;
+                @ScoreBoard.started += instance.OnScoreBoard;
+                @ScoreBoard.performed += instance.OnScoreBoard;
+                @ScoreBoard.canceled += instance.OnScoreBoard;
             }
         }
     }
@@ -941,5 +969,6 @@ public class @InputMaster : IInputActionCollection, IDisposable
         void OnEscape(InputAction.CallbackContext context);
         void OnADS(InputAction.CallbackContext context);
         void OnMagnetize(InputAction.CallbackContext context);
+        void OnScoreBoard(InputAction.CallbackContext context);
     }
 }

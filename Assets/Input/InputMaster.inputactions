@@ -132,6 +132,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "ScoreBoard",
+                    "type": "Button",
+                    "id": "8ddfdcd2-c108-40a4-877f-6a18e139f17c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -660,6 +668,17 @@
                     "processors": "",
                     "groups": "Keyboard and Mouse",
                     "action": "Magnetize",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7ded56f0-eabd-4126-9539-107178feb597",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScoreBoard",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

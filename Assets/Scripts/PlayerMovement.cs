@@ -9,10 +9,11 @@ public class PlayerMovement : MonoBehaviour
     public InputMaster inputMaster;
     public PlayerUI playerUI;
     public Transform orientation;
+    public LayerMask whatIsGravityObject;
 
     #region Set Up
 
-    public void Initialize(int _id, float _maxJetPackTime)
+    public void Initialize(int _id)
     {
         id = _id;
         if (gameObject.name != "LocalPlayer(Clone)")
@@ -20,7 +21,7 @@ public class PlayerMovement : MonoBehaviour
             enabled = false;
             return;
         }
-        playerUI.SetMaxJetPack(_maxJetPackTime);
+        //playerUI.SetMaxJetPack(_maxJetPackTime);
 
     }
 
@@ -43,9 +44,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        //TODO: ADD LAYER MASK
-        if (Physics.OverlapSphere(transform.position, 10, LayerMask.GetMask("GravityObject")).Length != 0)
-            RotatePlayerAccordingToGravity(Physics.OverlapSphere(transform.position, 10, LayerMask.GetMask("GravityObject"))[0]);
+        if (Physics.OverlapSphere(transform.position, 10, whatIsGravityObject).Length != 0)
+            RotatePlayerAccordingToGravity(Physics.OverlapSphere(transform.position, 10, whatIsGravityObject)[0]);
 
         // Jetpack up and down
         if (inputMaster.Player.Jump.ReadValue<float>() != 0)
@@ -78,7 +78,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void PlayerContinueJetPack(float _jetPackTime)
     {
-        playerUI.SetJetPack(_jetPackTime);
+        //playerUI.SetJetPack(_jetPackTime);
     }
 
     #endregion

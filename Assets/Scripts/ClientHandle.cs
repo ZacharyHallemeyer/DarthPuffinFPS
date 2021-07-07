@@ -27,10 +27,9 @@ public class ClientHandle : MonoBehaviour
         int _currentAmmo = _packet.ReadInt();
         int _reserveAmmo = _packet.ReadInt();
         float _maxGrappleTime = _packet.ReadFloat();
-        float _maxJetPackTime = _packet.ReadFloat();
 
         GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation, _gunName, _currentAmmo, 
-                                         _reserveAmmo, _maxGrappleTime, _maxJetPackTime);
+                                         _reserveAmmo, _maxGrappleTime);
     }
 
     public static void PlayerPosition(Packet _packet)
@@ -61,6 +60,10 @@ public class ClientHandle : MonoBehaviour
 
         Destroy(GameManager.players[_id].gameObject);
         GameManager.players.Remove(_id);
+        foreach(PlayerManager _player in GameManager.players.Values)
+        {
+            _player.playerUI.InitScoreBoard();
+        }
     }
 
     public static void OtherPlayerTakenDamage(Packet _packet)
@@ -212,5 +215,32 @@ public class ClientHandle : MonoBehaviour
         float _jetPackTime = _packet.ReadFloat();
 
         GameManager.playersMovement[_fromId].PlayerContinueJetPack(_jetPackTime);
+    }
+
+    public static void UpdatePlayerKillStats(Packet _packet)
+    {
+        int _id = _packet.ReadInt();
+        int _currentKills = _packet.ReadInt();
+
+        GameManager.players[_id].currentKills = _currentKills;
+    }
+
+    public static void UpdatePlayerDeathStats(Packet _packet)
+    {
+        int _id = _packet.ReadInt();
+        int _currentDeaths = _packet.ReadInt();
+
+        GameManager.players[_id].currentDeaths = _currentDeaths;
+    }
+
+    public static void DisplayeScoreBoard(Packet _packet)
+    {
+        foreach(PlayerManager _player in GameManager.players.Values)
+        {
+            if(_player != null)
+            {
+
+            }
+        }
     }
 }

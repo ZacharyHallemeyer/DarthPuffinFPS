@@ -297,6 +297,8 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.playerSwitchWeapon, ClientHandle.PlayerSwitchWeapon },
             { (int)ServerPackets.playerShotLanded, ClientHandle.PlayerShotLanded },
             { (int)ServerPackets.playerContinueJetPack, ClientHandle.PlayerContinueJetPack },
+            { (int)ServerPackets.updatePlayerKillStats, ClientHandle.UpdatePlayerKillStats },
+            { (int)ServerPackets.updatePlayerDeathStats, ClientHandle.UpdatePlayerDeathStats },
         };
         Debug.Log("Initialized packets.");
     }

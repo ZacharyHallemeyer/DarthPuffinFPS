@@ -239,7 +239,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 03487115395d5be46b16531572bc0f86, type: 2}
+  - {fileID: 2100000, guid: 2871d9f3e93c54c4fac02f47e0296ab3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -394,6 +394,9 @@ MonoBehaviour:
   damagedPlayerMaterial: {fileID: 2100000, guid: 4b428e8457040fe49934e700f022bbad,
     type: 2}
   deadPlayerMaterial: {fileID: 2100000, guid: 4b428e8457040fe49934e700f022bbad, type: 2}
+  basePlayerShader: {fileID: 0}
+  damagedPlayerShader: {fileID: 0}
+  deadPlayerShader: {fileID: 0}
   lineRenderer: {fileID: 3987186948932302561}
   gunPistol: {fileID: 4533898798903763665}
   gunSMG: {fileID: 3628308210142854331}
