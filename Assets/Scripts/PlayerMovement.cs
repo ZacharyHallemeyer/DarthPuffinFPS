@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
 
     #region Set Up
 
-    public void Initialize(int _id)
+    public void Initialize(int _id, float _maxJetPackTime)
     {
         id = _id;
         if (gameObject.name != "LocalPlayer(Clone)")
@@ -21,7 +21,7 @@ public class PlayerMovement : MonoBehaviour
             enabled = false;
             return;
         }
-        //playerUI.SetMaxJetPack(_maxJetPackTime);
+        playerUI.SetMaxJetPack(_maxJetPackTime);
 
     }
 
@@ -78,7 +78,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void PlayerContinueJetPack(float _jetPackTime)
     {
-        //playerUI.SetJetPack(_jetPackTime);
+        playerUI.SetJetPack(_jetPackTime);
     }
 
     #endregion

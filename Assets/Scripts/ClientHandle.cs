@@ -27,9 +27,10 @@ public class ClientHandle : MonoBehaviour
         int _currentAmmo = _packet.ReadInt();
         int _reserveAmmo = _packet.ReadInt();
         float _maxGrappleTime = _packet.ReadFloat();
+        float _maxJetPackTime = _packet.ReadFloat();
 
         GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation, _gunName, _currentAmmo, 
-                                         _reserveAmmo, _maxGrappleTime);
+                                         _reserveAmmo, _maxGrappleTime, _maxJetPackTime);
     }
 
     public static void PlayerPosition(Packet _packet)
@@ -93,8 +94,19 @@ public class ClientHandle : MonoBehaviour
     {
         Vector3 _position = _packet.ReadVector3();
         Vector3 _localScale = _packet.ReadVector3();
+        float _gravityField = _packet.ReadFloat();
 
-        GameManager.instance.CreatePlanet(_position, _localScale);
+        GameManager.instance.CreatePlanet(_position, _localScale, _gravityField);
+    }
+
+    public static void CreateNewNonGravityObject(Packet _packet)
+    {
+        Vector3 _position = _packet.ReadVector3();
+        Vector3 _localScale = _packet.ReadVector3();
+        Quaternion _rotation = _packet.ReadQuaternion();
+        string _name = _packet.ReadString();
+
+        GameManager.instance.CreateNonGravityObject(_position, _localScale, _rotation, _name);
     }
 
     public static void CreateBoundary(Packet _packet)

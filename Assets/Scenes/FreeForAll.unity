@@ -542,6 +542,10 @@ MonoBehaviour:
     type: 3}
   boundaryParticleFieldPrefab: {fileID: 7262253648658839211, guid: 24286ef2bb455604387b8e70baa01898,
     type: 3}
+  nonGravityObjects:
+  - {fileID: 9187801399389479177, guid: 650eac626c1c41142a6bd3d977b65b97, type: 3}
+  - {fileID: 2128785905636851943, guid: 1409c818b2cc9f44a8ad2d26f0eaeb22, type: 3}
+  - {fileID: 3881814635048264086, guid: de6e8ac5a8e22e6498086814c337aa77, type: 3}
 --- !u!1 &2092470317
 GameObject:
   m_ObjectHideFlags: 0

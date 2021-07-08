@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     public GameObject planetPrefab;
     public GameObject gravityParticleFieldPrefab;
     public GameObject boundaryParticleFieldPrefab;
+    public GameObject[] nonGravityObjects;
+
 
     private void Awake()
     {
@@ -37,7 +39,8 @@ public class GameManager : MonoBehaviour
     /// <param name="_position"> player spawn position </param>
     /// <param name="_rotation"> player spawn rotation </param>
     public void SpawnPlayer(int _id, string _username, Vector3 _position, Quaternion _rotation, 
-                            string _gunName, int _currentAmmo, int _reserveAmmo, float _maxGrappleTime)
+                            string _gunName, int _currentAmmo, int _reserveAmmo, float _maxGrappleTime,
+                            float _maxJetPackTime)
     {
         GameObject _player;
         if (_id != Client.instance.myId)
@@ -60,7 +63,7 @@ public class GameManager : MonoBehaviour
             _player = Instantiate(localPlayerPrefab, _position, _rotation);
             _player.GetComponent<PlayerActions>().Initialize(_id, _gunName, _currentAmmo, _reserveAmmo, _maxGrappleTime);
             playersActions.Add(_id, _player.GetComponent<PlayerActions>());
-            _player.GetComponent<PlayerMovement>().Initialize(_id);
+            _player.GetComponent<PlayerMovement>().Initialize(_id, _maxJetPackTime);
             playersMovement.Add(_id, _player.GetComponent<PlayerMovement>());
             _player.GetComponent<PlayerManager>().Initialize(_id, _username);
             players.Add(_id, _player.GetComponent<PlayerManager>());
@@ -78,7 +81,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     /// <param name="_position"> Origin of new planet </param>
     /// <param name="_localScale"> radius of new planet in Vector3 format </param>
-    public void CreatePlanet(Vector3 _position, Vector3 _localScale)
+    public void CreatePlanet(Vector3 _position, Vector3 _localScale, float gravityField)
     {
         Color _color = RandomColor();
 
@@ -98,11 +101,24 @@ public class GameManager : MonoBehaviour
         ParticleSystem.ShapeModule _shapeModule = _gravityParticleSystem.GetComponent<ParticleSystem>().shape;
         // 50 is gravity distance 
         // TODO: add parem of gravity distance
-        _shapeModule.radius = _localScale.x + 50 / 2;
+        _shapeModule.radius = _localScale.x + gravityField / 2;
 
         // Random color
         _gravityParticleSystem.GetComponent<ParticleSystemRenderer>().material.color = _color;
         _gravityParticleSystem.GetComponent<ParticleSystemRenderer>().material.SetColor("_EmissionColor", _color);
+    }
+
+    public void CreateNonGravityObject(Vector3 _position, Vector3 _localScale, Quaternion _rotation,
+                                       string _objectName)
+    {
+        foreach(GameObject _object in nonGravityObjects)
+        {
+            if(_objectName.Contains(_object.name))
+            {
+                GameObject _nonGraviyObject = Instantiate(_object, _position, _rotation);
+                _nonGraviyObject.transform.localScale = _localScale;
+            }
+        }
     }
 
     /// <summary>

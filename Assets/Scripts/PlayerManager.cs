@@ -47,8 +47,7 @@ public class PlayerManager : MonoBehaviour
     public void Initialize(int _id, string _username)
     {
         id = _id;
-        //username = _username;
-        username = _id.ToString();
+        username = _username;
         health = maxHealth;
         SetGunInformation();
         if (name != "LocalPlayer(Clone)")

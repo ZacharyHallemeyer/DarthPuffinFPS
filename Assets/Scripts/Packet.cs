@@ -17,6 +17,7 @@ public enum ServerPackets
     playerHealth,
     playerRespawned,
     createNewPlanet,
+    createNewNonGravityObject,
     createBoundary,
     playerStartGrapple,
     playerContinueGrapple,
@@ -40,6 +41,7 @@ public enum ServerPackets
 public enum ClientPackets
 {
     welcomeReceived = 1,
+    playerChangeGameMode,
     playerMovement, 
     playerJetPackMovement,
     playerActions,

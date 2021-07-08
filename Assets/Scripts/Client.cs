@@ -32,6 +32,7 @@ public class Client : MonoBehaviour
             Destroy(this);
         }
 
+        DontDestroyOnLoad(this);
         instance.ConnectToServer();
     }
 
@@ -282,6 +283,7 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.playerHealth, ClientHandle.PlayerHealth },
             { (int)ServerPackets.playerRespawned, ClientHandle.PlayerRespawned },
             { (int)ServerPackets.createNewPlanet, ClientHandle.CreateNewPlanet },
+            { (int)ServerPackets.createNewNonGravityObject, ClientHandle.CreateNewNonGravityObject },
             { (int)ServerPackets.createBoundary, ClientHandle.CreateBoundary },
             { (int)ServerPackets.playerStartGrapple, ClientHandle.PlayerStartGrapple },
             { (int)ServerPackets.playerContinueGrapple, ClientHandle.PlayerContinueGrapple },
